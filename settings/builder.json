@@ -1,7 +1,7 @@
 {
   "title": "flappyBird",
   "packageName": "",
-  "startScene": "e73a7886-16ec-49ff-bb62-4f836506ef51",
+  "startScene": "9be8a190-43ad-475b-a877-2c2885b6b0d8",
   "excludeScenes": [],
   "includeSDKBox": false,
   "orientation": {
@@ -21,15 +21,25 @@
   "zipCompressJs": true,
   "fb-instant-games": {},
   "android": {
-    "packageName": "com.flappyBird.www"
+    "packageName": "com.flappyBird.www",
+    "REMOTE_SERVER_ROOT": ""
   },
   "ios": {
-    "packageName": ""
+    "packageName": "",
+    "REMOTE_SERVER_ROOT": "",
+    "ios_enable_jit": true
   },
   "mac": {
-    "packageName": ""
+    "packageName": "",
+    "REMOTE_SERVER_ROOT": "",
+    "width": 1280,
+    "height": 720
   },
-  "win32": {},
+  "win32": {
+    "REMOTE_SERVER_ROOT": "",
+    "width": 1280,
+    "height": 720
+  },
   "android-instant": {
     "REMOTE_SERVER_ROOT": "",
     "host": "",
@@ -39,5 +49,11 @@
     "scheme": "https",
     "skipRecord": false
   },
-  "appBundle": false
+  "appBundle": false,
+  "mainCompressionType": "default",
+  "mainIsRemote": false,
+  "nativeMd5Cache": true,
+  "agreements": {
+    "20200904180755": false
+  }
 }

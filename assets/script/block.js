@@ -1,36 +1,45 @@
+import {gameData} from './gameConfig'
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        blockUp:cc.Node,
-        blockDown:cc.Node,
+        blockUp: cc.Node,
+        blockDown: cc.Node,
     },
 
-    onLoad () {
-        this.beginSpeed = 2
-        this.maxSpeed = 4
-        this.upSpeedRate = 50
+    onLoad() {
+        this.birdX = game.hero.x
+        this.beginSpeed = gameData.beginSpeed
+        this.maxSpeed = gameData.maxSpeed
+        this.upSpeedRate = gameData.upSpeedRate
+        this.blockEnterMaxHeight = gameData.blockEnterMaxHeight
+        this.blockEnterMinHeight = gameData.blockEnterMinHeight
+        this.blockEnterChangeRate = gameData.blockEnterChangeRate
     },
 
-    init:function(){
-        // 是否可以增加分数
-        this.canScore = true 
-        const blockY = 380 - game.numScore / 5
-        if(blockY < 360){
-            blockY = 360
+    onEnable() {
+        this.canScore = true
+        const blockY = this.blockEnterMaxHeight - game.score * this.blockEnterChangeRate
+        if (blockY < this.blockEnterMinHeight) {
+            blockY = this.blockEnterMinHeight
         }
         this.blockUp.y = blockY * (-1)
         this.blockDown.y = blockY
     },
 
-    update (dt) {
-        let spendX = this.beginSpeed + game.numScore / this.upSpeedRate
-        if(spendX > this.maxSpeed){
-            spendX = this.maxSpeed
+    update(dt) {
+        let speedX = this.beginSpeed + game.score * this.upSpeedRate
+        if (speedX > this.maxSpeed) {
+            speedX = this.maxSpeed
         }
-        if(game.gameType != 2) return
-        this.node.x = this.node.x - spendX
-        if(this.node.x < -350){
+        if (game.gameType != 2) return
+        this.node.x = this.node.x - speedX
+        
+        if (this.node.x < (this.birdX - 25) && this.canScore) {
+            this.canScore = false
+            game.score++
+        }
+        if (this.node.x < -350) {
             game.onBlockKilled(this.node)
         }
     },

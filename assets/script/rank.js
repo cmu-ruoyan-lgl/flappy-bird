@@ -15,7 +15,7 @@ cc.Class({
 
     // },
 
-    init (_rank, _name, _score) {
+    init(_rank, _name, _score) {
         this.rank.string = _rank
         this.playerName.string = _name
         this.score.string = _score
