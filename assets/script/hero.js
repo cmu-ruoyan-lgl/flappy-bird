@@ -1,4 +1,4 @@
-import {gameData} from './gameConfig'
+import { gameData } from './gameConfig'
 cc.Class({
     extends: cc.Component,
 
@@ -17,10 +17,10 @@ cc.Class({
     },
 
     onCollisionEnter(other, self) {
-        if (game.gameType == 3) return
+        if (game.gameType === "gameOver") return
         // 碰管道
-        if (other.tag == 0) {
-            game.gameType = 3
+        if (other.tag === 0) {
+            game.gameType = "gameOver"
             this.playSound()
             this.node.stopAllActions()
             const fallTime = (this.node.y - this.landTopY) / 650
@@ -49,9 +49,9 @@ cc.Class({
 
     setRotation(type) {
         this.node.stopActionByTag(1)
-        if (type == 'up') {
+        if (type === 'up') {
             this.node.angle = 20
-        } else if (type == 'down') {
+        } else if (type === 'down') {
             const act_1 = cc.rotateTo(0.6, -80)
             act_1.setTag(1)
             this.node.runAction(act_1)
@@ -75,13 +75,13 @@ cc.Class({
     },
 
     update(dt) {
-        if (game.gameType != 2) return
-        if (this.fall == false) return
+        if (game.gameType !== "gamePlaying") return
+        if (this.fall === false) return
         this.time++
         this.node.y = this.node.y - 100 * dt - this.time * 8 * dt
         // 小鸟碰到了地面
         if (this.node.y <= this.landTopY) {
-            game.gameType = 3
+            game.gameType = "gameOver"
             this.playSound()
             this.scheduleOnce(function () {
                 game.shouldShowPlayerNameInput()

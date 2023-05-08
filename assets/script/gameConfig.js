@@ -1,5 +1,8 @@
 var gameData = {
 
+    // game 
+    gameType: "gameBegin",
+
     // rank 
     rankInfoGap: 4,
 

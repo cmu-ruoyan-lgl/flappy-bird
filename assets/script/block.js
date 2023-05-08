@@ -1,4 +1,4 @@
-import {gameData} from './gameConfig'
+import { gameData } from './gameConfig'
 cc.Class({
     extends: cc.Component,
 
@@ -32,9 +32,9 @@ cc.Class({
         if (speedX > this.maxSpeed) {
             speedX = this.maxSpeed
         }
-        if (game.gameType != 2) return
+        if (game.gameType !== "gamePlaying") return
         this.node.x = this.node.x - speedX
-        
+
         if (this.node.x < (this.birdX - 25) && this.canScore) {
             this.canScore = false
             game.score++

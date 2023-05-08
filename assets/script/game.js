@@ -1,4 +1,4 @@
-import {gameData} from './gameConfig'
+import { gameData } from './gameConfig'
 cc.Class({
     extends: cc.Component,
 
@@ -37,28 +37,28 @@ cc.Class({
         cc.director.getCollisionManager().enabled = true
         // 0:gameBegin 1:gameReady 2:gamePlaying 3:gameOver
         if (cc.director.getScene().name === "begin") {
-            this.gameType = 0
+            this.gameType = "gameBegin"
             this.gameBegin.active = true
             this.gameReady.active = false
             this.scrollView.active = false
         } else {
-            this.gameType = 1
+            this.gameType = "gameReady"
             this.gameBegin.active = false
             this.gameReady.active = true
         }
-    
+
         this.actTitle()
         this.actHero()
         this.actLabel()
         this.setTouch()
-   
+
         // 当前分数
         this.score = 0
         this.numBlock = 0
         this.scoreCurrentPlay.string = 0
         // 地面位置初始化
         this.land_1.x = 0
-        this.land_2.x = this.land_1.x + this.land_1.width     
+        this.land_2.x = this.land_1.x + this.land_1.width
         // 对象池技术
         this.blockPool = new cc.NodePool()
         this.bird = this.hero.getComponent('hero')
@@ -75,12 +75,12 @@ cc.Class({
 
     setTouch() {
         this.node.on('touchend', function (event) {
-            if (this.gameType === 1) {
-                this.gameType = 2
+            if (this.gameType === "gameReady") {
+                this.gameType = "gamePlaying"
                 this.ready.active = false
                 this.hero.stopActionByTag(3)
             }
-            if (this.gameType === 2) {
+            if (this.gameType === "gamePlaying") {
                 this.bird.jump()
             }
         }, this)
@@ -236,7 +236,7 @@ cc.Class({
 
     // 地面轮播
     runLand() {
-        if (this.gameType === 3) return
+        if (this.gameType === "gameOver") return
         this.land_1.x = this.land_1.x - 3
         this.land_2.x = this.land_2.x - 3
         if (this.land_1.x <= -this.land_1.width) {
@@ -256,7 +256,7 @@ cc.Class({
             this.cleanAllBlocks()
             this.gameOver.active = false
             this.gameReady.active = true
-            this.score = 0        
+            this.score = 0
             this.numBlock = 0
             this.firBlockX = 360
             this.hero.stopAllActions()
@@ -265,7 +265,7 @@ cc.Class({
             this.ready.active = true
             this.actHero()
             this.actLabel()
-            this.gameType = 1
+            this.gameType = "gameReady"
             this.scoreCurrentPlay.string = 0
         } else if (str === 'btnRank') {
             this.gameBegin.active = false
@@ -289,7 +289,7 @@ cc.Class({
 
     update(dt) {
         this.runLand()
-        if (this.gameType !== 2) return
+        if (this.gameType !== "gamePlaying") return
         // 判断是否该生成新管子
         this.shouldGenerateBlock()
         // 更新界面的显示得分
