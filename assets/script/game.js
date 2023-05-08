@@ -22,7 +22,6 @@ cc.Class({
         scoreBestOver: cc.Label,
         playerNameEditBox: cc.EditBox,
         nameInput: cc.Node,
-
         wing: cc.AudioClip,
         coin: cc.AudioClip,
     },
@@ -71,6 +70,11 @@ cc.Class({
         // 单一管道的位置
         this.maxBlockY = gameData.maxBlockY
         this.minBlockY = gameData.minBlockY
+        // 场景移动速度
+        this.speedX = gameData.beginSpeed
+        this.beginSpeed = gameData.beginSpeed
+        this.maxSpeed = gameData.maxSpeed
+        this.upSpeedRate = gameData.upSpeedRate
     },
 
     setTouch() {
@@ -78,9 +82,9 @@ cc.Class({
             if (this.gameType === "gameReady") {
                 this.gameType = "gamePlaying"
                 this.ready.active = false
+                this.bird.jump()
                 this.hero.stopActionByTag(3)
-            }
-            if (this.gameType === "gamePlaying") {
+            }else if (this.gameType === "gamePlaying") {
                 this.bird.jump()
             }
         }, this)
@@ -108,7 +112,6 @@ cc.Class({
         this.scoreCurrentOver.string = this.score
         this.scoreBestOver.string = this.score
 
-        // 读数据
         const scoreData = cc.sys.localStorage.getItem('rank_score')
         let classBestScoreArray = JSON.parse(scoreData)
 
@@ -120,11 +123,8 @@ cc.Class({
         if (this.getName !== "")
             playerName = this.getName
         if (!classBestScoreArray) {
-            classBestScoreArray = []
-            const gameScoreNow = { name: playerName, score: this.score }
-            classBestScoreArray.unshift(gameScoreNow)
+            classBestScoreArray = [ { name: playerName, score: this.score }]
         } else if (this.score > oldScoreBest) {
-            // const isSame = classBestScoreArray.some(num => num.name === playerName)
             let isSame = false
             const classBestScoreArrayLen = classBestScoreArray.length
             for (let i = 0; i < classBestScoreArrayLen; i++) {
@@ -138,8 +138,7 @@ cc.Class({
                 // sort 按照得分从大到小
                 classBestScoreArray = Array.from(classBestScoreArray).sort((a, b) => b.score - a.score)
             } else {
-                const gameScoreNow = { name: playerName, score: this.score }
-                classBestScoreArray.unshift(gameScoreNow)
+                classBestScoreArray.unshift({ name: playerName, score: this.score })
             }
         } else if (this.score < oldScoreBest) {
             this.scoreBestOver.string = oldScoreBest
@@ -158,7 +157,6 @@ cc.Class({
             block = cc.instantiate(this.preBlock)
         }
         block.parent = this.blockParent
-        // block.getComponent('block').init()
         block.setPosition(pos)
     },
 
@@ -190,7 +188,6 @@ cc.Class({
             this.createBlock(cc.v2(this.firBlockX, Math.random() * (this.maxBlockY - this.minBlockY) + this.minBlockY))
             this.numBlock++
         }
-
         if (this.numBlock < 5) {
             const lastBlockX = this.blockParent.children[this.blockParent.children.length - 1].x
             this.createBlock(cc.v2(lastBlockX + this.betweenX, Math.random() * (this.maxBlockY - this.minBlockY) + this.minBlockY))
@@ -203,7 +200,6 @@ cc.Class({
         const act_1 = cc.moveBy(0.4, cc.v2(0, 10))
         const act_2 = cc.moveBy(0.8, cc.v2(0, -20))
         const act_3 = cc.moveBy(0.4, cc.v2(0, 10))
-
         const act_4 = cc.sequence(act_1, act_2, act_3)
         const act_5 = cc.repeatForever(act_4)
         this.title.runAction(act_5)
@@ -214,7 +210,6 @@ cc.Class({
         const act_1 = cc.moveBy(0.4, cc.v2(0, 10))
         const act_2 = cc.moveBy(0.8, cc.v2(0, -20))
         const act_3 = cc.moveBy(0.4, cc.v2(0, 10))
-
         const act_4 = cc.sequence(act_1, act_2, act_3)
         const act_5 = cc.repeatForever(act_4)
         act_5.setTag(3)
@@ -228,7 +223,6 @@ cc.Class({
         const act_1 = cc.rotateBy(0.5, 10)
         const act_2 = cc.rotateBy(1, -20)
         const act_3 = cc.rotateBy(0.5, 10)
-
         const act_4 = cc.sequence(act_1, act_2, act_3)
         const act_5 = cc.repeatForever(act_4)
         this.labPlay.runAction(act_5)
@@ -237,8 +231,8 @@ cc.Class({
     // 地面轮播
     runLand() {
         if (this.gameType === "gameOver") return
-        this.land_1.x = this.land_1.x - 3
-        this.land_2.x = this.land_2.x - 3
+        this.land_1.x = this.land_1.x - this.speedX
+        this.land_2.x = this.land_2.x - this.speedX
         if (this.land_1.x <= -this.land_1.width) {
             this.land_1.x = this.land_2.x + this.land_1.width
         }
@@ -287,7 +281,15 @@ cc.Class({
         }
     },
 
+    updateSpeedX() {
+        this.speedX =  this.beginSpeed + this.score * this.upSpeedRate
+        if (this.speedX > this.maxSpeed) {
+            this.speedX = this.maxSpeed
+        }
+    },
+
     update(dt) {
+        this.updateSpeedX()
         this.runLand()
         if (this.gameType !== "gamePlaying") return
         // 判断是否该生成新管子
