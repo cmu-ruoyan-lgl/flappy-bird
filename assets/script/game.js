@@ -58,8 +58,13 @@ cc.Class({
         this.bird = this.hero.getComponent('hero')
 
         // 下面从gameConfig中初始化的变量
+        this.landTopY = gameData.landTopY
         this.rankInfoGap = gameData.rankInfoGap
         this.firBlockX = gameData.firBlockX
+        this.titlePosX = gameData.titlePosX
+        this.titlePosY = gameData.titlePosY
+        this.heroPosX = gameData.heroPosX
+        this.heroPosY = gameData.heroPosY
         // 两个管道之间的距离
         this.betweenX = gameData.betweenX
         // 单一管道的位置
@@ -88,7 +93,7 @@ cc.Class({
                 this.ready.active = false
                 this.bird.jump()
                 this.hero.stopActionByTag(3)
-            }else if (this.gameType === "gamePlaying") {
+            } else if (this.gameType === "gamePlaying") {
                 this.bird.jump()
             }
         }, this)
@@ -97,7 +102,7 @@ cc.Class({
     shouldShowPlayerNameInput() {
         const scoreData = cc.sys.localStorage.getItem('rank_score')
         let classBestScoreArray = null
-        if(this.isJSON(scoreData)) 
+        if (this.isJSON(scoreData))
             classBestScoreArray = JSON.parse(scoreData)
         let oldScoreBest = null
         if (classBestScoreArray !== null) {
@@ -120,7 +125,7 @@ cc.Class({
 
         const scoreData = cc.sys.localStorage.getItem('rank_score')
         let classBestScoreArray = null
-        if(this.isJSON(scoreData)) 
+        if (this.isJSON(scoreData))
             classBestScoreArray = JSON.parse(scoreData)
 
         let oldScoreBest = 0
@@ -132,7 +137,7 @@ cc.Class({
         if (this.getName !== "")
             playerName = this.getName
         if (!classBestScoreArray) {
-            classBestScoreArray = [ { name: playerName, score: this.score }]
+            classBestScoreArray = [{ name: playerName, score: this.score }]
         } else if (this.score > oldScoreBest) {
             let isSame = false
             const classBestScoreArrayLen = classBestScoreArray.length
@@ -173,7 +178,7 @@ cc.Class({
         let rankInfo = null
         const scoreData = cc.sys.localStorage.getItem('rank_score')
         let classBestScoreArray = null
-        if(this.isJSON(scoreData)) 
+        if (this.isJSON(scoreData))
             classBestScoreArray = JSON.parse(scoreData)
         if (classBestScoreArray === null) return
         const classBestScoreArrayLen = classBestScoreArray.length
@@ -206,13 +211,14 @@ cc.Class({
         }
     },
 
-    // gameBegin title上下移动的动作
+    // "flabbybird" title上下移动的动作
     actTitle() {
         const act_1 = cc.moveBy(0.4, cc.v2(0, 10))
         const act_2 = cc.moveBy(0.8, cc.v2(0, -20))
         const act_3 = cc.moveBy(0.4, cc.v2(0, 10))
         const act_4 = cc.sequence(act_1, act_2, act_3)
         const act_5 = cc.repeatForever(act_4)
+        act_5.setTag(4)
         this.title.runAction(act_5)
     },
 
@@ -267,7 +273,7 @@ cc.Class({
             this.actHero()
             this.actLabel()
             this.hero.angle = 0
-            this.hero.setPosition(cc.v2(-140, 85))
+            this.hero.setPosition(cc.v2(this.heroPosX, this.heroPosY))
             this.gameType = "gameReady"
             this.scoreCurrentPlay.string = 0
         } else if (str === 'btnRank') {
@@ -275,7 +281,18 @@ cc.Class({
             this.scrollView.active = true
             this.createRankInfo()
         } else if (str === 'btnReturnMain') {
-            cc.director.loadScene("begin") // todo
+            this.title.stopAllActions()
+            this.hero.stopAllActions()
+            this.hero.angle = 0
+            this.hero.setPosition(cc.v2(this.heroPosX, this.heroPosY))
+            this.title.setPosition(cc.v2(this.titlePosX, this.titlePosY))
+            this.actTitle()
+            this.actHero()
+            this.cleanAllBlocks()
+            this.scrollView.active = false
+            this.gameOver.active = false
+            this.gameType = "gameBegin"
+            this.gameBegin.active = true
         } else if (str === 'btnPush') {
             this.getName = this.playerNameEditBox.string
             this.saveGameData()
@@ -291,7 +308,7 @@ cc.Class({
     },
 
     updateSpeedX() {
-        this.speedX =  this.beginSpeed + this.score * this.upSpeedRate
+        this.speedX = this.beginSpeed + this.score * this.upSpeedRate
         if (this.speedX > this.maxSpeed) {
             this.speedX = this.maxSpeed
         }

@@ -6,6 +6,10 @@ var gameData = {
     maxSpeed: 4,
     upSpeedRate: 0.02,
 
+    // title
+    titlePosX: 0,
+    titlePosY: 305,
+
     // rank 
     rankInfoGap: 4,
 
@@ -24,5 +28,8 @@ var gameData = {
     // hero
     fallAcceleration: 8,
     fallEternalRate: 100,
+    heroPosX: -140,
+    heroPosY: 75,
+    dieFallRate: 650,
 }
 exports.gameData = gameData

@@ -16,6 +16,7 @@ cc.Class({
         this.landTopY = gameData.landTopY
         this.fallAcceleration = gameData.fallAcceleration
         this.fallEternalRate = gameData.fallEternalRate
+        this.dieFallRate = gameData.dieFallRate
     },
 
     onCollisionEnter(other, self) {
@@ -25,7 +26,7 @@ cc.Class({
             game.gameType = "gameOver"
             this.playSound()
             this.node.stopAllActions()
-            const fallTime = (this.node.y - this.landTopY) / 650
+            const fallTime = (this.node.y - this.landTopY) / this.dieFallRate
             const act_1 = cc.delayTime(0.2)
             const act_2 = cc.moveTo(fallTime, cc.v2(this.node.x, this.landTopY))
             const act_3 = cc.rotateTo(fallTime, -90)
@@ -46,7 +47,7 @@ cc.Class({
         }, 0.2)
         this.scheduleOnce(function () {
             cc.audioEngine.play(this.swoosh, false, 1)
-        }, 0.6)
+        }, 0.2)
     },
 
     setRotation(type) {
