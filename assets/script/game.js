@@ -35,16 +35,10 @@ cc.Class({
         // 开启碰撞检测系统，未开启时无法检测
         cc.director.getCollisionManager().enabled = true
         // 0:gameBegin 1:gameReady 2:gamePlaying 3:gameOver
-        if (cc.director.getScene().name === "begin") {
-            this.gameType = "gameBegin"
-            this.gameBegin.active = true
-            this.gameReady.active = false
-            this.scrollView.active = false
-        } else {
-            this.gameType = "gameReady"
-            this.gameBegin.active = false
-            this.gameReady.active = true
-        }
+        this.gameType = "gameBegin"
+        this.gameBegin.active = true
+        this.gameReady.active = false
+        this.scrollView.active = false
 
         this.actTitle()
         this.actHero()
@@ -243,22 +237,19 @@ cc.Class({
 
     clickBtn(sender, str) {
         if (str === 'btnPlay') {
-            if (cc.director.getScene().name !== "game") {
-                cc.director.loadScene("game")
-            }
-        } else if (str === 'btnOver') {
             this.cleanAllBlocks()
+            this.gameBegin.active = false
             this.gameOver.active = false
+            this.ready.active = true
             this.gameReady.active = true
             this.score = 0
             this.numBlock = 0
-            this.firBlockX = 360
             this.hero.stopAllActions()
-            this.hero.angle = 0
-            this.hero.setPosition(cc.v2(-140, 85))
-            this.ready.active = true
+            this.actTitle()
             this.actHero()
             this.actLabel()
+            this.hero.angle = 0
+            this.hero.setPosition(cc.v2(-140, 85))
             this.gameType = "gameReady"
             this.scoreCurrentPlay.string = 0
         } else if (str === 'btnRank') {

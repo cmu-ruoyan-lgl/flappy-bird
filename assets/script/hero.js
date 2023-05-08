@@ -14,6 +14,8 @@ cc.Class({
         // 是否可以落下
         this.fall = true
         this.landTopY = gameData.landTopY
+        this.fallAcceleration = gameData.fallAcceleration
+        this.fallEternalRate = gameData.fallEternalRate
     },
 
     onCollisionEnter(other, self) {
@@ -78,7 +80,7 @@ cc.Class({
         if (game.gameType !== "gamePlaying") return
         if (this.fall === false) return
         this.time++
-        this.node.y = this.node.y - 100 * dt - this.time * 8 * dt
+        this.node.y = this.node.y - this.fallEternalRate * dt - this.time * this.fallAcceleration * dt
         // 小鸟碰到了地面
         if (this.node.y <= this.landTopY) {
             game.gameType = "gameOver"
