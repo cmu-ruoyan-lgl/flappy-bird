@@ -39,6 +39,7 @@ cc.Class({
         this.gameBegin.active = true
         this.gameReady.active = false
         this.scrollView.active = false
+        this.nameInput.active = false
 
         this.actTitle()
         this.actHero()
@@ -71,6 +72,15 @@ cc.Class({
         this.upSpeedRate = gameData.upSpeedRate
     },
 
+    isJSON(data) {
+        try {
+            JSON.parse(data)
+        } catch (e) {
+            return false
+        }
+        return true
+    },
+
     setTouch() {
         this.node.on('touchend', function (event) {
             if (this.gameType === "gameReady") {
@@ -86,7 +96,9 @@ cc.Class({
 
     shouldShowPlayerNameInput() {
         const scoreData = cc.sys.localStorage.getItem('rank_score')
-        const classBestScoreArray = JSON.parse(scoreData)
+        let classBestScoreArray = null
+        if(this.isJSON(scoreData)) 
+            classBestScoreArray = JSON.parse(scoreData)
         let oldScoreBest = null
         if (classBestScoreArray !== null) {
             oldScoreBest = classBestScoreArray[0].score
@@ -107,10 +119,13 @@ cc.Class({
         this.scoreBestOver.string = this.score
 
         const scoreData = cc.sys.localStorage.getItem('rank_score')
-        let classBestScoreArray = JSON.parse(scoreData)
+        let classBestScoreArray = null
+        if(this.isJSON(scoreData)) 
+            classBestScoreArray = JSON.parse(scoreData)
 
         let oldScoreBest = 0
         if (classBestScoreArray !== null) {
+            console.log(classBestScoreArray)
             oldScoreBest = classBestScoreArray[0].score
         }
         let playerName = ""
@@ -157,7 +172,9 @@ cc.Class({
     createRankInfo() {
         let rankInfo = null
         const scoreData = cc.sys.localStorage.getItem('rank_score')
-        const classBestScoreArray = JSON.parse(scoreData)
+        let classBestScoreArray = null
+        if(this.isJSON(scoreData)) 
+            classBestScoreArray = JSON.parse(scoreData)
         if (classBestScoreArray === null) return
         const classBestScoreArrayLen = classBestScoreArray.length
         for (let i = 0; i < classBestScoreArrayLen; i++) {
@@ -242,6 +259,7 @@ cc.Class({
             this.gameOver.active = false
             this.ready.active = true
             this.gameReady.active = true
+            this.nameInput.active = false
             this.score = 0
             this.numBlock = 0
             this.hero.stopAllActions()
