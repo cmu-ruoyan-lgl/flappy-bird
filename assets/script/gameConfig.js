@@ -1,7 +1,5 @@
 var gameData = {
-
     // game 
-    gameType: "gameBegin",
     beginSpeed: 2,
     maxSpeed: 4,
     upSpeedRate: 0.02,
@@ -25,11 +23,20 @@ var gameData = {
     blockEnterMinHeight: 360,
     blockEnterChangeRate: 0.2,
 
-    // hero
+    // birdNode
     fallAcceleration: 8,
     fallEternalRate: 100,
-    heroPosX: -140,
-    heroPosY: 75,
+    birdNodePosX: -140,
+    birdNodePosY: 75,
     dieFallRate: 650,
 }
+
+var gameType = {
+    begin: 0,
+    ready: 1,
+    playing: 2,
+    over: 3,
+}
+
 exports.gameData = gameData
+exports.gameType = gameType

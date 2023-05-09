@@ -1,4 +1,4 @@
-import { gameData } from './gameConfig'
+import { gameData, gameType } from './gameConfig'
 cc.Class({
     extends: cc.Component,
 
@@ -8,24 +8,19 @@ cc.Class({
     },
 
     onLoad() {
-        this.birdX = game.hero.x
-        this.blockEnterMaxHeight = gameData.blockEnterMaxHeight
-        this.blockEnterMinHeight = gameData.blockEnterMinHeight
-        this.blockEnterChangeRate = gameData.blockEnterChangeRate
+        this.birdX = game.birdNode.x
     },
 
     onEnable() {
         this.canScore = true
-        const blockY = this.blockEnterMaxHeight - game.score * this.blockEnterChangeRate
-        if (blockY < this.blockEnterMinHeight) {
-            blockY = this.blockEnterMinHeight
-        }
+        let blockY = gameData.blockEnterMaxHeight - game.score * gameData.blockEnterChangeRate
+        blockY = Math.max(blockY, gameData.blockEnterMinHeight)
         this.blockUp.y = blockY * (-1)
         this.blockDown.y = blockY
     },
 
     update(dt) {
-        if (game.gameType !== "gamePlaying") return
+        if (game.gameType !== gameType.playing) return
         this.node.x = this.node.x - game.speedX
         if (this.node.x < (this.birdX - 25) && this.canScore) {
             this.canScore = false
